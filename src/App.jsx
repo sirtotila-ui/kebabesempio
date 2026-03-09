@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-const WHATSAPP_LINK = "https://wa.me/393331234567?text=Ciao%2C%20vorrei%20ordinare!";
-const TEL_LINK = "tel:+390544123456";
+const WHATSAPP_LINK = "https://wa.me/393247724048?text=Ciao%2C%20vorrei%20ordinare!";
+const TEL_LINK = "tel:+393247724048";
 
 const MENU_TAB1 = [
   { nome: "Piadina Kebab", prezzo: "da €4.50", desc: "Piadina artigianale fatta al momento con ricca farcitura di kebab, verdure, cipolla e salsa", tag: "bestseller" },
@@ -24,12 +24,6 @@ const MENU_TAB2 = [
   { nome: "Family Menu", prezzo: "€22.00", desc: "20 alette di pollo + 3 filetti di pollo impanati. Per tutta la famiglia!", tag: "" },
 ];
 
-const SPECIALITA = [
-  { emoji: "🥩", titolo: "Carne Marinata a Mano", desc: "Ogni giorno mariniamo la carne fresca con le nostre spezie. Zero carne industriale." },
-  { emoji: "🫓", titolo: "Pane Fresco", desc: "Il pane lo facciamo noi, caldo, ogni giorno. Mai surgelato, mai riscaldato." },
-  { emoji: "🥬", titolo: "Verdure Tagliate al Momento", desc: "Niente buste. Le verdure le tagliamo fresche per ogni ordine." },
-  { emoji: "🔥", titolo: "Spiedo a Fiamma", desc: "Cottura allo spiedo verticale a fiamma viva. Il sapore che fa la differenza." },
-];
 
 const RECENSIONI = [
   { testo: "Locale molto buono gestito da 2 ragazzi molto accoglienti. Il kebab è di qualità e c'è una grande varietà di verdure da scegliere per farcirlo, ma il punto forte è la piadina artigianale fatta sul momento e cotta in un forno a legna. Locale assolutamente da provare se piace il kebab.", nome: "Alessandro Orsini", piattaforma: "Google", stelle: 5 },
@@ -770,46 +764,6 @@ export default function App() {
         </div>
       </section>
 
-      {/* ─── PERCHÉ NOI ─── */}
-      <section id="perche-noi" style={{ background: "#141414" }}>
-        <div style={sectionPadding}>
-          <Reveal>
-            <div style={{ textAlign: "center", marginBottom: "48px" }}>
-              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
-                Perché Al-Turk
-              </h2>
-            </div>
-          </Reveal>
-
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "24px",
-            }}
-          >
-            {SPECIALITA.map((s, i) => (
-              <Reveal key={s.titolo} delay={i * 0.1}>
-                <div
-                  className="card-lift"
-                  style={{
-                    background: "#0A0A0A",
-                    border: "1px solid rgba(255,255,255,0.06)",
-                    borderRadius: "12px",
-                    padding: "32px 24px",
-                    height: "100%",
-                  }}
-                >
-                  <div style={{ fontSize: "32px", marginBottom: "16px" }}>{s.emoji}</div>
-                  <h3 style={{ ...headingStyle, fontSize: "18px", marginBottom: "12px" }}>{s.titolo}</h3>
-                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.6 }}>{s.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── RECENSIONI ─── */}
       <section id="recensioni" style={{ background: "#0A0A0A" }}>
         <div style={sectionPadding}>
@@ -1009,6 +963,43 @@ export default function App() {
         </div>
       </section>
 
+      {/* ─── DOVE SIAMO ─── */}
+      <section id="dove-siamo" style={{ background: "#141414" }}>
+        <div style={sectionPadding}>
+          <Reveal>
+            <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
+                Dove Siamo
+              </h2>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", marginTop: "16px" }}>
+                Vicolo Plazzi 7, 48121 Ravenna RA
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div
+              style={{
+                borderRadius: "12px",
+                overflow: "hidden",
+                border: "1px solid rgba(255,255,255,0.06)",
+                height: "400px",
+              }}
+            >
+              <iframe
+                title="Al-Turk Kebab & Pizzeria - Mappa"
+                src="https://maps.google.com/maps?q=Vicolo+Plazzi+7,+48121+Ravenna+RA,+Italy&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0, display: "block", filter: "invert(90%) hue-rotate(180deg) brightness(0.95) contrast(1.1)" }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ─── FOOTER ─── */}
       <footer style={{ background: "#0A0A0A", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
         <div
@@ -1035,11 +1026,11 @@ export default function App() {
               Contatti
             </div>
             <p style={{ fontSize: "14px", lineHeight: 1.8 }}>
-              Via Roma 45, Ravenna
+              Vicolo Plazzi 7, 48121 Ravenna RA
               <br />
-              <a href={TEL_LINK} style={{ color: "rgba(255,255,255,0.6)" }}>0544 123456</a>
+              <a href={TEL_LINK} style={{ color: "rgba(255,255,255,0.6)" }}>324 772 4048</a>
               <br />
-              <a href="mailto:info@istanbulgrill.it" style={{ color: "rgba(255,255,255,0.6)" }}>info@istanbulgrill.it</a>
+              <a href="tel:+390544206406" style={{ color: "rgba(255,255,255,0.6)" }}>0544 206 406</a>
             </p>
           </div>
 
@@ -1050,9 +1041,7 @@ export default function App() {
             <p style={{ fontSize: "14px", lineHeight: 1.8 }}>
               Lun-Dom
               <br />
-              11:30-14:30
-              <br />
-              18:00-23:00
+              11:00 – 2:00
             </p>
           </div>
 
