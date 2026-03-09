@@ -4,21 +4,24 @@ const WHATSAPP_LINK = "https://wa.me/393331234567?text=Ciao%2C%20vorrei%20ordina
 const TEL_LINK = "tel:+390544123456";
 
 const MENU_TAB1 = [
-  { nome: "Kebab Classico", prezzo: "€5.50", desc: "Carne mista marinata, insalata, pomodori, cipolla, salsa yogurt, pane fresco", tag: "bestseller" },
-  { nome: "Kebab Piccante", prezzo: "€6.00", desc: "Carne mista marinata, insalata, pomodori, cipolla, salsa piccante, jalapeños", tag: "" },
-  { nome: "Kebab XXL", prezzo: "€8.00", desc: "Doppia carne, doppia verdura, tutte le salse, pane maxi", tag: "popular" },
-  { nome: "Kebab nel Piatto", prezzo: "€7.50", desc: "Carne marinata servita con riso basmati, insalata mista, hummus, salsa yogurt", tag: "" },
-  { nome: "Durum Wrap", prezzo: "€6.50", desc: "Carne marinata in piadina sottile, verdure fresche, salsa a scelta", tag: "nuovo" },
-  { nome: "Veggie Kebab", prezzo: "€5.00", desc: "Falafel fatti in casa, hummus, verdure grigliate, salsa tahina, pane fresco", tag: "vegan" },
+  { nome: "Piadina Kebab", prezzo: "da €4.50", desc: "Piadina artigianale fatta al momento con ricca farcitura di kebab, verdure, cipolla e salsa", tag: "bestseller" },
+  { nome: "Panino Kebab", prezzo: "da €5.00", desc: "Panino con ricca farcitura di kebab, verdure, cipolla e salsa a scelta", tag: "popular" },
+  { nome: "Twin Cheeseburger", prezzo: "da €5.50", desc: "Panino con doppio burger di manzo, doppio formaggio, pomodoro e insalata", tag: "" },
+  { nome: "Royal Chicken", prezzo: "da €6.50", desc: "Panino con filetto di pollo impanato, formaggio e una fritta di patate", tag: "" },
+  { nome: "Crispy Chicken", prezzo: "da €4.50", desc: "Panino con filetto di pollo croccante, formaggio e insalata, pomodoro", tag: "" },
+  { nome: "Doppio Crispy", prezzo: "da €6.50", desc: "Panino con doppio filetto di pollo impanato e insalata", tag: "" },
+  { nome: "Chicken Wrap", prezzo: "€5.00", desc: "Piadina con pollo, pomodoro e insalata", tag: "" },
+  { nome: "Piadina Falafel", prezzo: "da €4.00", desc: "Piadina con falafel e abbondanti verdure croccanti", tag: "vegan" },
 ];
 
 const MENU_TAB2 = [
-  { nome: "Piatto Misto Al-Turk", prezzo: "€10.00", desc: "Carne kebab, falafel, hummus, riso basmati, insalata, pane, tutte le salse", tag: "premium" },
-  { nome: "Lahmacun", prezzo: "€4.50", desc: "Pizza turca sottile con carne macinata speziata, prezzemolo, limone", tag: "" },
-  { nome: "Falafel Piatto", prezzo: "€7.00", desc: "6 falafel fatti in casa con hummus, insalata, riso e salsa tahina", tag: "vegan" },
-  { nome: "Chicken Burger", prezzo: "€6.00", desc: "Pollo marinato grigliato, insalata, pomodoro, salsa yogurt, pane brioche", tag: "" },
-  { nome: "Patatine Loaded", prezzo: "€5.50", desc: "Patatine croccanti con carne kebab, salsa yogurt, salsa piccante, cipolla croccante", tag: "popular" },
-  { nome: "Bibite & Ayran", prezzo: "€2.00", desc: "Coca-Cola, Fanta, Sprite, acqua, Ayran fatto in casa", tag: "" },
+  { nome: "Kebab al Piatto", prezzo: "da €7.00", desc: "Ricca porzione di kebab con carne, verdure e riso. Maxi disponibile", tag: "bestseller" },
+  { nome: "Piatto Falafel", prezzo: "da €5.00", desc: "6 pz di falafel con abbondanti verdure e contorno", tag: "vegan" },
+  { nome: "Riso Kebab", prezzo: "da €5.00", desc: "Riso saporito con verdure stufate e salse", tag: "" },
+  { nome: "Rice Biryani", prezzo: "da €4.50", desc: "Riso con pollo, pomodoro, spezie e insalata", tag: "" },
+  { nome: "Seekh Kebab", prezzo: "da €4.00", desc: "Spiedini di carne speziata con verdure, cipolla e salsa", tag: "popular" },
+  { nome: "Fritto Misto", prezzo: "da €9.00", desc: "4 alette di pollo, 3 striscette, 4 nuggets, 1 falafel, cheese e patatine", tag: "premium" },
+  { nome: "Family Menu", prezzo: "€22.00", desc: "20 alette di pollo + 3 filetti di pollo impanati. Per tutta la famiglia!", tag: "" },
 ];
 
 const SPECIALITA = [
@@ -29,9 +32,9 @@ const SPECIALITA = [
 ];
 
 const RECENSIONI = [
-  { testo: "Il miglior kebab che abbia mai mangiato in Italia. Si sente che la carne è fresca e marinata bene. Le salse sono fatte in casa, il pane è caldo. Un altro livello rispetto ai soliti kebab.", nome: "Marco R.", piattaforma: "Google", stelle: 5 },
-  { testo: "Finalmente un kebab che non è il solito panino triste. Carne saporita, verdure fresche, porzioni generose. Il piatto misto Al-Turk è pazzesco. Ci torno ogni settimana.", nome: "Sara L.", piattaforma: "Google", stelle: 5 },
-  { testo: "Prezzi onesti per una qualità che non trovi da nessun'altra parte. Il durum wrap è diventato la mia ossessione. Ragazzi gentilissimi e veloci. Consigliatissimo.", nome: "Andrea B.", piattaforma: "TripAdvisor", stelle: 5 },
+  { testo: "Locale molto buono gestito da 2 ragazzi molto accoglienti. Il kebab è di qualità e c'è una grande varietà di verdure da scegliere per farcirlo, ma il punto forte è la piadina artigianale fatta sul momento e cotta in un forno a legna. Locale assolutamente da provare se piace il kebab.", nome: "Alessandro Orsini", piattaforma: "Google", stelle: 5 },
+  { testo: "Carne kebab davvero ottima! Servizio eccellente e titolare di una gentilezza e disponibilità mai riscontrata! 5 stelle sono davvero poche! SEMPLICEMENTE TOP.", nome: "Luigi Maria Manes", piattaforma: "Google", stelle: 5 },
+  { testo: "Kebab super farcito buonissimo. Personale gentile e accogliente. Locale pulito e curato con tavolini interni ed esterni. Il menù offre vasta scelta e i prezzi sono molto economici.", nome: "Silvia Grifoni", piattaforma: "Google", stelle: 5 },
 ];
 
 const FAQ = [
@@ -603,27 +606,6 @@ export default function App() {
             </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s both",
-            }}
-          >
-            <img
-              src="/images/hero-kebab.png"
-              alt="Kebab artigianale Al-Turk Kebab & Pizzeria"
-              style={{
-                width: "100%",
-                maxWidth: "480px",
-                height: "auto",
-                objectFit: "contain",
-                filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))",
-                animation: "heroImgFloat 4s ease-in-out infinite",
-              }}
-            />
-          </div>
         </div>
       </section>
 
@@ -641,8 +623,8 @@ export default function App() {
           <Reveal>
             <div style={{ borderRadius: "12px", overflow: "hidden" }}>
               <img
-                src="/images/spiedo.png"
-                alt="Spiedo di carne con spezie e fiamme"
+              src="/images/locale.png"
+              alt="Esterno del locale Al-Turk Kebab & Pizzeria"
                 style={{
                   width: "100%",
                   height: "360px",
@@ -718,7 +700,7 @@ export default function App() {
                 marginBottom: "40px",
               }}
             >
-              {["Kebab", "Piatti & Panini"].map((tab, i) => (
+              {["Panini Forti", "Piatti Forti"].map((tab, i) => (
                 <button
                   key={tab}
                   onClick={() => handleTabSwitch(i)}
@@ -755,6 +737,36 @@ export default function App() {
               <MenuItem key={item.nome} item={item} index={i} />
             ))}
           </div>
+
+          <Reveal delay={0.15}>
+            <div style={{ textAlign: "center", marginTop: "48px" }}>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "14px", marginBottom: "16px" }}>
+                Pizze, calzoni, dolci e molto altro...
+              </p>
+              <a
+                href="/images/menu-completo.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-secondary"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  background: "transparent",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: "15px",
+                  padding: "14px 28px",
+                  borderRadius: "8px",
+                  minHeight: "48px",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                }}
+              >
+                📋 Vedi Menu Completo
+              </a>
+            </div>
+          </Reveal>
         </div>
       </section>
 
