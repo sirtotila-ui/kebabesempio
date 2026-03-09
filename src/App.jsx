@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const WHATSAPP_LINK = "https://wa.me/393331234567?text=Ciao%2C%20vorrei%20ordinare!";
 const TEL_LINK = "tel:+390544123456";
@@ -13,7 +13,7 @@ const MENU_TAB1 = [
 ];
 
 const MENU_TAB2 = [
-  { nome: "Piatto Misto Istanbul", prezzo: "€10.00", desc: "Carne kebab, falafel, hummus, riso basmati, insalata, pane, tutte le salse", tag: "premium" },
+  { nome: "Piatto Misto Al-Turk", prezzo: "€10.00", desc: "Carne kebab, falafel, hummus, riso basmati, insalata, pane, tutte le salse", tag: "premium" },
   { nome: "Lahmacun", prezzo: "€4.50", desc: "Pizza turca sottile con carne macinata speziata, prezzemolo, limone", tag: "" },
   { nome: "Falafel Piatto", prezzo: "€7.00", desc: "6 falafel fatti in casa con hummus, insalata, riso e salsa tahina", tag: "vegan" },
   { nome: "Chicken Burger", prezzo: "€6.00", desc: "Pollo marinato grigliato, insalata, pomodoro, salsa yogurt, pane brioche", tag: "" },
@@ -30,7 +30,7 @@ const SPECIALITA = [
 
 const RECENSIONI = [
   { testo: "Il miglior kebab che abbia mai mangiato in Italia. Si sente che la carne è fresca e marinata bene. Le salse sono fatte in casa, il pane è caldo. Un altro livello rispetto ai soliti kebab.", nome: "Marco R.", piattaforma: "Google", stelle: 5 },
-  { testo: "Finalmente un kebab che non è il solito panino triste. Carne saporita, verdure fresche, porzioni generose. Il piatto misto Istanbul è pazzesco. Ci torno ogni settimana.", nome: "Sara L.", piattaforma: "Google", stelle: 5 },
+  { testo: "Finalmente un kebab che non è il solito panino triste. Carne saporita, verdure fresche, porzioni generose. Il piatto misto Al-Turk è pazzesco. Ci torno ogni settimana.", nome: "Sara L.", piattaforma: "Google", stelle: 5 },
   { testo: "Prezzi onesti per una qualità che non trovi da nessun'altra parte. Il durum wrap è diventato la mia ossessione. Ragazzi gentilissimi e veloci. Consigliatissimo.", nome: "Andrea B.", piattaforma: "TripAdvisor", stelle: 5 },
 ];
 
@@ -49,6 +49,40 @@ const TAG_COLORS = {
   popular: { bg: "#DC2626", color: "#fff" },
   premium: { bg: "transparent", color: "#fff", border: "1px solid rgba(255,255,255,0.4)" },
 };
+
+/* ─── Scroll-reveal hook ─── */
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.unobserve(el); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return [ref, visible];
+}
+
+function Reveal({ children, delay = 0, style = {} }) {
+  const [ref, visible] = useInView(0.12);
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(32px)",
+        transition: `opacity 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s, transform 0.7s cubic-bezier(0.16,1,0.3,1) ${delay}s`,
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
 
 function Tag({ tag }) {
   if (!tag) return null;
@@ -75,15 +109,20 @@ function Tag({ tag }) {
   );
 }
 
-function MenuItem({ item }) {
+function MenuItem({ item, index }) {
+  const [ref, visible] = useInView(0.1);
   return (
     <div
+      ref={ref}
       style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-start",
         padding: "20px 0",
         borderBottom: "1px solid rgba(255,255,255,0.06)",
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateX(0)" : "translateX(-20px)",
+        transition: `opacity 0.5s ease ${index * 0.06}s, transform 0.5s ease ${index * 0.06}s`,
       }}
     >
       <div style={{ flex: 1, paddingRight: "16px" }}>
@@ -105,11 +144,7 @@ function MenuItem({ item }) {
 function FaqItem({ faq }) {
   const [open, setOpen] = useState(false);
   return (
-    <div
-      style={{
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
-      }}
-    >
+    <div style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
       <button
         onClick={() => setOpen(!open)}
         style={{
@@ -147,7 +182,7 @@ function FaqItem({ faq }) {
         style={{
           maxHeight: open ? "200px" : "0",
           overflow: "hidden",
-          transition: "max-height 0.3s ease",
+          transition: "max-height 0.4s cubic-bezier(0.16,1,0.3,1)",
         }}
       >
         <p
@@ -174,31 +209,26 @@ function Stars({ count }) {
   );
 }
 
-function Placeholder({ text, height = "320px" }) {
-  return (
-    <div
-      style={{
-        background: "#1A1A1A",
-        border: "1px solid rgba(220,38,38,0.15)",
-        borderRadius: "12px",
-        height,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-        textAlign: "center",
-        color: "rgba(255,255,255,0.3)",
-        fontSize: "14px",
-        lineHeight: 1.5,
-      }}
-    >
-      {text}
-    </div>
-  );
-}
+const NAV_LINKS = [
+  { label: "Chi Siamo", href: "#chi-siamo" },
+  { label: "Menù", href: "#menu" },
+  { label: "Recensioni", href: "#recensioni" },
+  { label: "Ordina", href: "#ordina" },
+];
 
 export default function App() {
   const [menuTab, setMenuTab] = useState(0);
+  const [tabFade, setTabFade] = useState(true);
+  const [mobileNav, setMobileNav] = useState(false);
+
+  const handleTabSwitch = (i) => {
+    if (i === menuTab) return;
+    setTabFade(false);
+    setTimeout(() => {
+      setMenuTab(i);
+      setTabFade(true);
+    }, 150);
+  };
 
   const sectionPadding = { padding: "80px 16px", maxWidth: "1100px", margin: "0 auto" };
   const headingStyle = {
@@ -219,16 +249,61 @@ export default function App() {
         fontSize: "16px",
         lineHeight: 1.6,
         minHeight: "100vh",
-        scrollBehavior: "smooth",
+        overflowX: "hidden",
       }}
     >
-      {/* Google Fonts */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body { margin: 0; background: #0A0A0A; -webkit-font-smoothing: antialiased; }
         a { text-decoration: none; }
+
+        @keyframes heroFadeUp {
+          from { opacity: 0; transform: translateY(30px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes heroImgFloat {
+          0%, 100% { transform: translateY(0); }
+          50%      { transform: translateY(-12px); }
+        }
+        @keyframes waPulse {
+          0%   { box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 0 rgba(37,211,102,0.5); }
+          70%  { box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 14px rgba(37,211,102,0); }
+          100% { box-shadow: 0 4px 12px rgba(0,0,0,0.3), 0 0 0 0 rgba(37,211,102,0); }
+        }
+        @keyframes badgeGlow {
+          0%, 100% { opacity: 1; }
+          50%      { opacity: 0.7; }
+        }
+
+        .card-lift {
+          transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), box-shadow 0.35s ease;
+        }
+        .card-lift:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+        .review-card {
+          transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease;
+        }
+        .review-card:hover {
+          transform: translateY(-4px);
+          border-color: rgba(220,38,38,0.3);
+        }
+        .nav-link { transition: color 0.3s ease; }
+        .nav-link:hover { color: #fff !important; }
+        .cta-primary { transition: opacity 0.3s ease, transform 0.3s ease; }
+        .cta-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+        .cta-secondary { transition: border-color 0.3s ease, transform 0.3s ease; }
+        .cta-secondary:hover { border-color: rgba(255,255,255,0.5) !important; transform: translateY(-1px); }
+
+        .nav-desktop { display: flex; }
+        .nav-burger { display: none; }
+        @media (max-width: 768px) {
+          .nav-desktop { display: none !important; }
+          .nav-burger { display: flex !important; }
+        }
       `}</style>
 
       {/* ─── NAVBAR ─── */}
@@ -255,26 +330,17 @@ export default function App() {
           }}
         >
           <a href="#hero" style={{ color: "#fff", fontWeight: 700, fontSize: "18px", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-            Istanbul Grill
+            Al-Turk Kebab & Pizzeria
           </a>
-          <div style={{ display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap" }}>
-            {[
-              { label: "Chi Siamo", href: "#chi-siamo" },
-              { label: "Menù", href: "#menu" },
-              { label: "Recensioni", href: "#recensioni" },
-              { label: "Ordina", href: "#ordina" },
-            ].map((link) => (
+
+          {/* Desktop links */}
+          <div className="nav-desktop" style={{ gap: "24px", alignItems: "center" }}>
+            {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
-                style={{
-                  color: "rgba(255,255,255,0.6)",
-                  fontSize: "14px",
-                  fontWeight: 500,
-                  transition: "color 0.3s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+                className="nav-link"
+                style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", fontWeight: 500 }}
               >
                 {link.label}
               </a>
@@ -283,6 +349,7 @@ export default function App() {
               href={WHATSAPP_LINK}
               target="_blank"
               rel="noopener noreferrer"
+              className="cta-primary"
               style={{
                 background: "#DC2626",
                 color: "#fff",
@@ -290,12 +357,116 @@ export default function App() {
                 fontSize: "13px",
                 padding: "8px 16px",
                 borderRadius: "8px",
-                transition: "opacity 0.3s ease",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
               Ordina
+            </a>
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="nav-burger"
+            onClick={() => setMobileNav(!mobileNav)}
+            aria-label="Menu"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: "5px",
+              width: "40px",
+              height: "40px",
+            }}
+          >
+            <span style={{
+              display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px",
+              transition: "transform 0.3s ease, opacity 0.3s ease",
+              transform: mobileNav ? "translateY(7px) rotate(45deg)" : "none",
+            }} />
+            <span style={{
+              display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px",
+              transition: "opacity 0.3s ease",
+              opacity: mobileNav ? 0 : 1,
+            }} />
+            <span style={{
+              display: "block", width: "22px", height: "2px", background: "#fff", borderRadius: "2px",
+              transition: "transform 0.3s ease, opacity 0.3s ease",
+              transform: mobileNav ? "translateY(-7px) rotate(-45deg)" : "none",
+            }} />
+          </button>
+        </div>
+
+        {/* Mobile dropdown */}
+        <div
+          style={{
+            maxHeight: mobileNav ? "400px" : "0",
+            overflow: "hidden",
+            transition: "max-height 0.4s cubic-bezier(0.16,1,0.3,1)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "4px",
+              paddingBottom: mobileNav ? "20px" : "0",
+              transition: "padding 0.3s ease",
+            }}
+          >
+            {NAV_LINKS.map((link, i) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setMobileNav(false)}
+                style={{
+                  display: "block",
+                  color: "rgba(255,255,255,0.7)",
+                  fontSize: "16px",
+                  fontWeight: 600,
+                  padding: "14px 16px",
+                  borderRadius: "8px",
+                  background: "rgba(255,255,255,0.04)",
+                  transition: "background 0.2s ease, color 0.2s ease",
+                  opacity: mobileNav ? 1 : 0,
+                  transform: mobileNav ? "translateY(0)" : "translateY(-8px)",
+                  transitionDelay: mobileNav ? `${i * 0.05}s` : "0s",
+                  transitionProperty: "opacity, transform, background, color",
+                  transitionDuration: "0.3s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.04)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href={WHATSAPP_LINK}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => setMobileNav(false)}
+              style={{
+                display: "block",
+                textAlign: "center",
+                background: "#DC2626",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: "15px",
+                padding: "14px 16px",
+                borderRadius: "8px",
+                marginTop: "8px",
+                minHeight: "48px",
+                lineHeight: "20px",
+                opacity: mobileNav ? 1 : 0,
+                transform: mobileNav ? "translateY(0)" : "translateY(-8px)",
+                transition: "opacity 0.3s ease, transform 0.3s ease",
+                transitionDelay: mobileNav ? `${NAV_LINKS.length * 0.05}s` : "0s",
+              }}
+            >
+              Ordina su WhatsApp
             </a>
           </div>
         </div>
@@ -323,6 +494,7 @@ export default function App() {
                 letterSpacing: "0.1em",
                 color: "rgba(255,255,255,0.5)",
                 marginBottom: "24px",
+                animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.1s both",
               }}
             >
               🔥 KEBAB ARTIGIANALE · RAVENNA
@@ -334,6 +506,7 @@ export default function App() {
                 fontSize: "clamp(40px, 8vw, 72px)",
                 lineHeight: 1.05,
                 marginBottom: "24px",
+                animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.25s both",
               }}
             >
               Non il Solito
@@ -348,16 +521,26 @@ export default function App() {
                 lineHeight: 1.6,
                 maxWidth: "520px",
                 marginBottom: "32px",
+                animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s both",
               }}
             >
               Carne marinata a mano. Pane fresco ogni giorno. Verdure tagliate al momento. Zero scorciatoie.
             </p>
 
-            <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", marginBottom: "48px" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "12px",
+                flexWrap: "wrap",
+                marginBottom: "48px",
+                animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.55s both",
+              }}
+            >
               <a
                 href={WHATSAPP_LINK}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="cta-primary"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -370,15 +553,13 @@ export default function App() {
                   borderRadius: "8px",
                   minHeight: "48px",
                   border: "none",
-                  transition: "opacity 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
               >
                 Ordina su WhatsApp
               </a>
               <a
                 href="#menu"
+                className="cta-secondary"
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -391,18 +572,22 @@ export default function App() {
                   borderRadius: "8px",
                   minHeight: "48px",
                   border: "1px solid rgba(255,255,255,0.2)",
-                  transition: "border-color 0.3s ease",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
               >
                 Guarda il Menù
               </a>
             </div>
 
-            <div style={{ display: "flex", gap: "32px", flexWrap: "wrap" }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "32px",
+                flexWrap: "wrap",
+                animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.7s both",
+              }}
+            >
               {[
-                { numero: "4.8", label: "Google" },
+                { numero: "4.4", label: "Google" },
                 { numero: "100%", label: "Artigianale" },
                 { numero: "2019", label: "Dal" },
               ].map((stat) => (
@@ -418,16 +603,24 @@ export default function App() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              animation: "heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.5s both",
+            }}
+          >
             <img
               src="/images/hero-kebab.png"
-              alt="Kebab artigianale Istanbul Grill"
+              alt="Kebab artigianale Al-Turk Kebab & Pizzeria"
               style={{
                 width: "100%",
                 maxWidth: "480px",
                 height: "auto",
                 objectFit: "contain",
                 filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))",
+                animation: "heroImgFloat 4s ease-in-out infinite",
               }}
             />
           </div>
@@ -445,40 +638,62 @@ export default function App() {
             alignItems: "center",
           }}
         >
-          <Placeholder text="Foto dello spiedo di carne con spezie e fiamme" height="360px" />
+          <Reveal>
+            <div style={{ borderRadius: "12px", overflow: "hidden" }}>
+              <img
+                src="/images/spiedo.png"
+                alt="Spiedo di carne con spezie e fiamme"
+                style={{
+                  width: "100%",
+                  height: "360px",
+                  objectFit: "cover",
+                  display: "block",
+                  transition: "transform 0.6s ease",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.03)")}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+              />
+            </div>
+          </Reveal>
           <div>
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "#DC2626",
-                marginBottom: "16px",
-                textTransform: "uppercase",
-              }}
-            >
-              CHI SIAMO
-            </span>
+            <Reveal>
+              <span
+                style={{
+                  display: "inline-block",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  color: "#DC2626",
+                  marginBottom: "16px",
+                  textTransform: "uppercase",
+                }}
+              >
+                CHI SIAMO
+              </span>
+            </Reveal>
 
-            <h2
-              style={{
-                ...headingStyle,
-                fontSize: "clamp(32px, 6vw, 48px)",
-                lineHeight: 1.1,
-                marginBottom: "24px",
-              }}
-            >
-              Kebab Vero.
-              <br />
-              <span style={{ color: "#DC2626" }}>Niente Compromessi.</span>
-            </h2>
+            <Reveal delay={0.1}>
+              <h2
+                style={{
+                  ...headingStyle,
+                  fontSize: "clamp(32px, 6vw, 48px)",
+                  lineHeight: 1.1,
+                  marginBottom: "24px",
+                }}
+              >
+                Kebab Vero.
+                <br />
+                <span style={{ color: "#DC2626" }}>Niente Compromessi.</span>
+              </h2>
+            </Reveal>
 
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px" }}>
-              Siamo partiti nel 2019 con un'ossessione: fare il kebab come va fatto. La carne la mariniamo noi ogni mattina con le nostre spezie. Il pane lo facciamo fresco, non lo scaldiamo dal surgelato. Le verdure le tagliamo al momento, non le tiriamo fuori da una busta.
-              <br /><br />
-              Ogni kebab che esce dal nostro locale è fatto a mano, dall'inizio alla fine. Se vuoi il solito kebab industriale, non siamo il posto giusto. Se vuoi quello vero, sei a casa.
-            </p>
+            <Reveal delay={0.2}>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", lineHeight: 1.7, maxWidth: "560px" }}>
+                Siamo partiti nel 2019 con un'ossessione: fare il kebab come va fatto. La carne la mariniamo noi ogni mattina con le nostre spezie. Il pane lo facciamo fresco, non lo scaldiamo dal surgelato. Le verdure le tagliamo al momento, non le tiriamo fuori da una busta.
+                <br /><br />
+                Ogni kebab che esce dal nostro locale è fatto a mano, dall'inizio alla fine. Se vuoi il solito kebab industriale, non siamo il posto giusto. Se vuoi quello vero, sei a casa.
+              </p>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -486,53 +701,58 @@ export default function App() {
       {/* ─── MENÙ ─── */}
       <section id="menu" style={{ background: "#0A0A0A" }}>
         <div style={sectionPadding}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2
+          <Reveal>
+            <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
+                Il Menù
+              </h2>
+            </div>
+          </Reveal>
+
+          <Reveal delay={0.1}>
+            <div
               style={{
-                ...headingStyle,
-                fontSize: "clamp(32px, 6vw, 48px)",
+                display: "flex",
+                justifyContent: "center",
+                gap: "8px",
+                marginBottom: "40px",
               }}
             >
-              Il Menù
-            </h2>
-          </div>
+              {["Kebab", "Piatti & Panini"].map((tab, i) => (
+                <button
+                  key={tab}
+                  onClick={() => handleTabSwitch(i)}
+                  style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700,
+                    fontSize: "14px",
+                    padding: "10px 24px",
+                    borderRadius: "8px",
+                    border: "1px solid",
+                    borderColor: menuTab === i ? "#DC2626" : "rgba(255,255,255,0.1)",
+                    background: menuTab === i ? "#DC2626" : "transparent",
+                    color: "#fff",
+                    cursor: "pointer",
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </Reveal>
 
-          {/* Tabs */}
           <div
             style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "8px",
-              marginBottom: "40px",
+              maxWidth: "700px",
+              margin: "0 auto",
+              opacity: tabFade ? 1 : 0,
+              transform: tabFade ? "translateY(0)" : "translateY(8px)",
+              transition: "opacity 0.25s ease, transform 0.25s ease",
             }}
           >
-            {["Kebab", "Piatti & Panini"].map((tab, i) => (
-              <button
-                key={tab}
-                onClick={() => setMenuTab(i)}
-                style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontWeight: 700,
-                  fontSize: "14px",
-                  padding: "10px 24px",
-                  borderRadius: "8px",
-                  border: "1px solid",
-                  borderColor: menuTab === i ? "#DC2626" : "rgba(255,255,255,0.1)",
-                  background: menuTab === i ? "#DC2626" : "transparent",
-                  color: "#fff",
-                  cursor: "pointer",
-                  transition: "all 0.3s ease",
-                }}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {/* Items */}
-          <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-            {(menuTab === 0 ? MENU_TAB1 : MENU_TAB2).map((item) => (
-              <MenuItem key={item.nome} item={item} />
+            {(menuTab === 0 ? MENU_TAB1 : MENU_TAB2).map((item, i) => (
+              <MenuItem key={item.nome} item={item} index={i} />
             ))}
           </div>
         </div>
@@ -541,16 +761,13 @@ export default function App() {
       {/* ─── PERCHÉ NOI ─── */}
       <section id="perche-noi" style={{ background: "#141414" }}>
         <div style={sectionPadding}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2
-              style={{
-                ...headingStyle,
-                fontSize: "clamp(32px, 6vw, 48px)",
-              }}
-            >
-              Perché Istanbul Grill
-            </h2>
-          </div>
+          <Reveal>
+            <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
+                Perché Al-Turk
+              </h2>
+            </div>
+          </Reveal>
 
           <div
             style={{
@@ -559,20 +776,23 @@ export default function App() {
               gap: "24px",
             }}
           >
-            {SPECIALITA.map((s) => (
-              <div
-                key={s.titolo}
-                style={{
-                  background: "#0A0A0A",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderRadius: "12px",
-                  padding: "32px 24px",
-                }}
-              >
-                <div style={{ fontSize: "32px", marginBottom: "16px" }}>{s.emoji}</div>
-                <h3 style={{ ...headingStyle, fontSize: "18px", marginBottom: "12px" }}>{s.titolo}</h3>
-                <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.6 }}>{s.desc}</p>
-              </div>
+            {SPECIALITA.map((s, i) => (
+              <Reveal key={s.titolo} delay={i * 0.1}>
+                <div
+                  className="card-lift"
+                  style={{
+                    background: "#0A0A0A",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderRadius: "12px",
+                    padding: "32px 24px",
+                    height: "100%",
+                  }}
+                >
+                  <div style={{ fontSize: "32px", marginBottom: "16px" }}>{s.emoji}</div>
+                  <h3 style={{ ...headingStyle, fontSize: "18px", marginBottom: "12px" }}>{s.titolo}</h3>
+                  <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.6 }}>{s.desc}</p>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -581,16 +801,13 @@ export default function App() {
       {/* ─── RECENSIONI ─── */}
       <section id="recensioni" style={{ background: "#0A0A0A" }}>
         <div style={sectionPadding}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2
-              style={{
-                ...headingStyle,
-                fontSize: "clamp(32px, 6vw, 48px)",
-              }}
-            >
-              Cosa Dicono di Noi
-            </h2>
-          </div>
+          <Reveal>
+            <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
+                Cosa Dicono di Noi
+              </h2>
+            </div>
+          </Reveal>
 
           <div
             style={{
@@ -599,39 +816,42 @@ export default function App() {
               gap: "24px",
             }}
           >
-            {RECENSIONI.map((r) => (
-              <div
-                key={r.nome}
-                style={{
-                  background: "#141414",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  borderLeft: "3px solid #DC2626",
-                  borderRadius: "12px",
-                  padding: "28px 24px",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                }}
-              >
-                <div>
-                  <Stars count={r.stelle} />
-                  <p
-                    style={{
-                      color: "rgba(255,255,255,0.7)",
-                      fontSize: "14px",
-                      lineHeight: 1.7,
-                      marginTop: "12px",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    "{r.testo}"
-                  </p>
+            {RECENSIONI.map((r, i) => (
+              <Reveal key={r.nome} delay={i * 0.12}>
+                <div
+                  className="review-card"
+                  style={{
+                    background: "#141414",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    borderLeft: "3px solid #DC2626",
+                    borderRadius: "12px",
+                    padding: "28px 24px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
+                  }}
+                >
+                  <div>
+                    <Stars count={r.stelle} />
+                    <p
+                      style={{
+                        color: "rgba(255,255,255,0.7)",
+                        fontSize: "14px",
+                        lineHeight: 1.7,
+                        marginTop: "12px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      &ldquo;{r.testo}&rdquo;
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ color: "#fff", fontWeight: 700, fontSize: "14px" }}>{r.nome}</span>
+                    <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>{r.piattaforma}</span>
+                  </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ color: "#fff", fontWeight: 700, fontSize: "14px" }}>{r.nome}</span>
-                  <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "12px" }}>{r.piattaforma}</span>
-                </div>
-              </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -640,137 +860,139 @@ export default function App() {
       {/* ─── ORDINA ─── */}
       <section id="ordina" style={{ background: "#141414" }}>
         <div style={{ ...sectionPadding, display: "flex", justifyContent: "center" }}>
-          <div
-            style={{
-              background: "#141414",
-              border: "1px solid rgba(255,255,255,0.06)",
-              borderRadius: "12px",
-              padding: "clamp(32px, 5vw, 48px)",
-              maxWidth: "600px",
-              width: "100%",
-              textAlign: "center",
-            }}
-          >
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.1em",
-                color: "rgba(255,255,255,0.5)",
-                marginBottom: "16px",
-              }}
-            >
-              🛵 ORDINA
-            </span>
-
-            <h2 style={{ ...headingStyle, fontSize: "clamp(28px, 5vw, 40px)", marginBottom: "16px" }}>
-              Pronto in 15 Minuti
-            </h2>
-
-            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", marginBottom: "32px" }}>
-              Ordina su WhatsApp o chiama. Asporto e delivery in zona.
-            </p>
-
-            <div style={{ textAlign: "left", marginBottom: "32px" }}>
-              {[
-                "Ordina via WhatsApp o telefono",
-                "Pronto in 15 minuti",
-                "Delivery in zona gratuita sopra €15",
-                "Packaging 100% riciclabile",
-              ].map((f) => (
-                <div
-                  key={f}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    marginBottom: "12px",
-                    fontSize: "15px",
-                  }}
-                >
-                  <span style={{ color: "#DC2626", fontWeight: 700, flexShrink: 0 }}>✓</span>
-                  <span>{f}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Offerta */}
+          <Reveal>
             <div
               style={{
-                background: "#DC2626",
-                color: "#fff",
-                fontWeight: 700,
-                borderRadius: "8px",
-                padding: "8px 16px",
-                display: "inline-block",
-                fontSize: "14px",
-                marginBottom: "24px",
+                background: "#141414",
+                border: "1px solid rgba(255,255,255,0.06)",
+                borderRadius: "12px",
+                padding: "clamp(32px, 5vw, 48px)",
+                maxWidth: "600px",
+                width: "100%",
+                textAlign: "center",
               }}
             >
-              -10% sul primo ordine online. Scrivi PRIMO10 su WhatsApp.
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
+              <span
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  display: "inline-block",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  color: "rgba(255,255,255,0.5)",
+                  marginBottom: "16px",
+                }}
+              >
+                🛵 ORDINA
+              </span>
+
+              <h2 style={{ ...headingStyle, fontSize: "clamp(28px, 5vw, 40px)", marginBottom: "16px" }}>
+                Pronto in 15 Minuti
+              </h2>
+
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "16px", marginBottom: "32px" }}>
+                Ordina su WhatsApp o chiama. Asporto e delivery in zona.
+              </p>
+
+              <div style={{ textAlign: "left", marginBottom: "32px" }}>
+                {[
+                  "Ordina via WhatsApp o telefono",
+                  "Pronto in 15 minuti",
+                  "Delivery in zona gratuita sopra €15",
+                  "Packaging 100% riciclabile",
+                ].map((f) => (
+                  <div
+                    key={f}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      marginBottom: "12px",
+                      fontSize: "15px",
+                    }}
+                  >
+                    <span style={{ color: "#DC2626", fontWeight: 700, flexShrink: 0 }}>✓</span>
+                    <span>{f}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div
+                style={{
                   background: "#DC2626",
                   color: "#fff",
                   fontWeight: 700,
-                  fontSize: "15px",
-                  padding: "14px 28px",
                   borderRadius: "8px",
-                  minHeight: "48px",
-                  border: "none",
-                  transition: "opacity 0.3s ease",
+                  padding: "8px 16px",
+                  display: "inline-block",
+                  fontSize: "14px",
+                  marginBottom: "24px",
+                  animation: "badgeGlow 2.5s ease-in-out infinite",
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.85")}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
               >
-                Ordina su WhatsApp →
-              </a>
-              <a
-                href={TEL_LINK}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "transparent",
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: "15px",
-                  padding: "14px 28px",
-                  borderRadius: "8px",
-                  minHeight: "48px",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  transition: "border-color 0.3s ease",
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)")}
-                onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
-              >
-                Chiama Ora
-              </a>
+                -10% sul primo ordine online. Scrivi PRIMO10 su WhatsApp.
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                <a
+                  href={WHATSAPP_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cta-primary"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "#DC2626",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    padding: "14px 28px",
+                    borderRadius: "8px",
+                    minHeight: "48px",
+                    border: "none",
+                  }}
+                >
+                  Ordina su WhatsApp →
+                </a>
+                <a
+                  href={TEL_LINK}
+                  className="cta-secondary"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "transparent",
+                    color: "#fff",
+                    fontWeight: 700,
+                    fontSize: "15px",
+                    padding: "14px 28px",
+                    borderRadius: "8px",
+                    minHeight: "48px",
+                    border: "1px solid rgba(255,255,255,0.2)",
+                  }}
+                >
+                  Chiama Ora
+                </a>
+              </div>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ─── FAQ ─── */}
       <section id="faq" style={{ background: "#0A0A0A" }}>
         <div style={{ ...sectionPadding, maxWidth: "700px" }}>
-          <div style={{ textAlign: "center", marginBottom: "48px" }}>
-            <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
-              Domande Frequenti
-            </h2>
-          </div>
-          {FAQ.map((faq) => (
-            <FaqItem key={faq.q} faq={faq} />
+          <Reveal>
+            <div style={{ textAlign: "center", marginBottom: "48px" }}>
+              <h2 style={{ ...headingStyle, fontSize: "clamp(32px, 6vw, 48px)" }}>
+                Domande Frequenti
+              </h2>
+            </div>
+          </Reveal>
+          {FAQ.map((faq, i) => (
+            <Reveal key={faq.q} delay={i * 0.08}>
+              <FaqItem faq={faq} />
+            </Reveal>
           ))}
         </div>
       </section>
@@ -787,17 +1009,15 @@ export default function App() {
             gap: "40px",
           }}
         >
-          {/* Col 1 */}
           <div>
             <div style={{ color: "#fff", fontWeight: 700, fontSize: "18px", textTransform: "uppercase", marginBottom: "12px" }}>
-              Istanbul Grill
+              Al-Turk Kebab & Pizzeria
             </div>
             <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", lineHeight: 1.6 }}>
               Kebab Artigianale. Fatto Come Si Deve.
             </p>
           </div>
 
-          {/* Col 2 - Contatti */}
           <div>
             <div style={{ color: "#fff", fontWeight: 700, fontSize: "14px", textTransform: "uppercase", marginBottom: "12px" }}>
               Contatti
@@ -811,7 +1031,6 @@ export default function App() {
             </p>
           </div>
 
-          {/* Col 3 - Orari */}
           <div>
             <div style={{ color: "#fff", fontWeight: 700, fontSize: "14px", textTransform: "uppercase", marginBottom: "12px" }}>
               Orari
@@ -825,7 +1044,6 @@ export default function App() {
             </p>
           </div>
 
-          {/* Col 4 - Social */}
           <div>
             <div style={{ color: "#fff", fontWeight: 700, fontSize: "14px", textTransform: "uppercase", marginBottom: "12px" }}>
               Seguici
@@ -834,16 +1052,14 @@ export default function App() {
               href="https://instagram.com/istanbulgrill"
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", transition: "color 0.3s ease" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.6)")}
+              className="nav-link"
+              style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px" }}
             >
               Instagram
             </a>
           </div>
         </div>
 
-        {/* Credits */}
         <div
           style={{
             borderTop: "1px solid rgba(255,255,255,0.06)",
@@ -886,11 +1102,14 @@ export default function App() {
           boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
           fontSize: "24px",
           transition: "transform 0.3s ease",
+          animation: "waPulse 2.5s ease-in-out infinite",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.1)")}
         onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
       >
-        💬
+        <svg viewBox="0 0 32 32" width="28" height="28" fill="#fff">
+          <path d="M16.01 2.93A13.07 13.07 0 0 0 2.93 16a12.94 12.94 0 0 0 1.75 6.53L2.84 29.1l6.72-1.76A13.06 13.06 0 1 0 16.01 2.93Zm0 23.93a10.82 10.82 0 0 1-5.52-1.51l-.4-.23-4.12 1.08 1.1-4.02-.26-.41a10.87 10.87 0 1 1 9.2 5.09Zm5.96-8.13c-.33-.16-1.93-.95-2.23-1.06-.3-.11-.52-.16-.74.17-.22.33-.84 1.06-1.03 1.28-.19.22-.38.24-.71.08-.33-.16-1.38-.51-2.63-1.62-.97-.87-1.63-1.94-1.82-2.27-.19-.33-.02-.51.14-.67.15-.15.33-.38.49-.57.17-.19.22-.33.33-.55.11-.22.06-.41-.03-.57-.08-.17-.74-1.77-1.01-2.43-.27-.63-.54-.55-.74-.56h-.63c-.22 0-.57.08-.87.41-.3.33-1.14 1.11-1.14 2.71s1.17 3.15 1.33 3.36c.16.22 2.3 3.51 5.58 4.92.78.34 1.39.54 1.86.69.78.25 1.5.21 2.06.13.63-.09 1.93-.79 2.21-1.55.27-.76.27-1.41.19-1.55-.08-.14-.3-.22-.63-.38Z"/>
+        </svg>
       </a>
     </div>
   );
