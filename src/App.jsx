@@ -882,22 +882,6 @@ export default function App() {
                 ))}
               </div>
 
-              <div
-                style={{
-                  background: "#DC2626",
-                  color: "#fff",
-                  fontWeight: 700,
-                  borderRadius: "8px",
-                  padding: "8px 16px",
-                  display: "inline-block",
-                  fontSize: "14px",
-                  marginBottom: "24px",
-                  animation: "badgeGlow 2.5s ease-in-out infinite",
-                }}
-              >
-                -10% sul primo ordine online. Scrivi PRIMO10 su WhatsApp.
-              </div>
-
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 <a
                   href={WHATSAPP_LINK}
